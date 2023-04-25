@@ -1,10 +1,23 @@
-####################### Early Stopping #######################
+####################### Loading Model #######################
+
+from transformers import get_scheduler
+
+def set_lr_scheduler(optimizer, num_training_steps, name = "linear", num_warmup_steps =  0):
+    lr_scheduler = get_scheduler(
+        name,
+        optimizer          = optimizer,
+        num_warmup_steps   = num_warmup_steps,
+        num_training_steps = num_training_steps,
+    )
+    return lr_scheduler
+
+####################### Training Loop #######################
 
 class EarlyStopping():
     def __init__(self, patience = 3, threshold = 0.1):
         self.patience      = patience
         self.threshold     = threshold
-        self.prev_val_loss = None
+        self.min_val_loss = None
         self.patienceCount = 0
         
     def _checkPatience(self,):
@@ -15,15 +28,13 @@ class EarlyStopping():
             return False
     
     def checkCondition(self, val_loss):
-        if self.prev_val_loss == None:
-            self.prev_val_loss = val_loss
-        elif val_loss - self.prev_val_loss > self.threshold:
+        if self.min_val_loss == None:
+            self.min_val_loss = val_loss
+        elif val_loss - self.min_val_loss > self.threshold:
             return self._checkPatience()
         
         self.patienceCount = 0
         return False
-
-####################### Eval Function #######################
 
 import evaluate
 import torch
@@ -42,6 +53,7 @@ def eval_loop(model, dataloader, device):
         metric.add_batch(predictions=predictions, references=batch["labels"])
         
     return metric.compute(), float(model_loss)
+
 
 
 ####################### Functions for Plots  #######################
