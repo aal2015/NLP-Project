@@ -54,8 +54,6 @@ def eval_loop(model, dataloader, device):
         
     return metric.compute(), float(model_loss)
 
-
-
 ####################### Functions for Plots  #######################
 
 import matplotlib.pyplot as plt
@@ -68,10 +66,28 @@ def plotLoss(trainingLoss, valLoss, legend=["Training Loss", "Val Loss"], title=
     plt.legend(legend)
     if title is not None:
         plt.title(title)
+
+def plotLossMulti(losses, legend, title=None):
+    for loss in losses:
+        plt.plot(loss)
+    plt.xlabel("Epoch")
+    plt.ylabel("loss")
+    plt.legend(legend)
+    if title is not None:
+        plt.title(title)
     
 def plotAccuracy(trainingAcc, valAcc, legend=["Training Accuracy", "Val Accuracy"], title=None):
     plt.plot(trainingAcc)
     plt.plot(valAcc)
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy (%)")
+    plt.legend(legend)
+    if title is not None:
+        plt.title(title)
+        
+def plotLossMulti(accs, legend, title=None):
+    for acc in accs:
+        plt.plot(acc)
     plt.xlabel("Epoch")
     plt.ylabel("Accuracy (%)")
     plt.legend(legend)
